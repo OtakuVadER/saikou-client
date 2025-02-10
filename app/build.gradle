@@ -1,23 +1,22 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
-    id 'kotlin-kapt'
-    id 'kotlinx-serialization'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlinx-serialization'
 }
 
 def gitCommitHash = providers.exec {
     commandLine("git", "rev-parse", "--verify", "--short", "HEAD")
-}.standardOutput.asText.get().trim()
+}.standardOutput.asText.getOrElse("").trim()
 
 android {
+    namespace 'ani.saikou'
     compileSdk 34
 
     defaultConfig {
         applicationId "the.vader.saikou"
         minSdk 21
         targetSdk 34
-        versionCode ((System.currentTimeMillis() / 60000).toInteger())
+        versionCode ((System.currentTimeMillis() / 60000).toInt())
         versionName "1.0"
         signingConfig signingConfigs.debug
     }
@@ -33,17 +32,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     buildFeatures {
         viewBinding true
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = '17'
     }
-    namespace 'ani.saikou'
 }
 
 dependencies {
@@ -56,8 +57,8 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation "androidx.work:work-runtime-ktx:2.8.1"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:2.1.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
 
     implementation 'com.github.Blatzar:NiceHttp:0.4.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0'
@@ -68,9 +69,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.16.0'
     implementation 'jp.wasabeef:glide-transformations:4.3.0'
 
-
 //    Exoplayer
-    ext.exo_version = '1.1.1'
+    def exo_version = '1.1.1'
     implementation "androidx.media3:media3-exoplayer:$exo_version"
     implementation "androidx.media3:media3-ui:$exo_version"
     implementation "androidx.media3:media3-exoplayer-hls:$exo_version"
