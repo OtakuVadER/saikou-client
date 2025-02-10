@@ -16,7 +16,7 @@ android {
         applicationId "the.vader.saikou"
         minSdk 21
         targetSdk 34
-        versionCode ((System.currentTimeMillis() / 60000).toInt())
+        versionCode ((System.currentTimeMillis() / 60000).intValue()) // FIXED
         versionName "1.0"
         signingConfig signingConfigs.debug
     }
@@ -34,7 +34,8 @@ android {
     }
 
     buildFeatures {
-        viewBinding true
+        viewBinding = true
+        buildConfig = true // FIXED
     }
 
     compileOptions {
