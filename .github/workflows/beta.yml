@@ -33,32 +33,22 @@ jobs:
       if: ${{ github.repository == 'OtakuVadER/saikou-client' }}
       run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > $GITHUB_WORKSPACE/key.keystore
 
-    - name: Make gradlew executable
-      if: ${{ env.SKIP_BUILD != 'true' }}
-      run: chmod +x ./gradlew
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
 
     - name: Build with Gradle
-      if: ${{ env.SKIP_BUILD != 'true' }}
-      run: |
-        if [ "${{ github.repository }}" == "OtakuVadER/saikou-client" ]; then
-          ./gradlew assembleGoogleAlpha \
+      run: ./gradlew assembleDebug
             -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/key.keystore \
             -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
             -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
             -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }};
-        else
-          ./gradlew assembleGoogleAlpha;
-        fi
+      shell: bash
 
     - name: Upload a Build Artifact
-      if: ${{ env.SKIP_BUILD != 'true' }}
       uses: actions/upload-artifact@v4
       with:
-          name: Saikou
-          retention-days: 5
-          compression-level: 9
-          path: "app/build/outputs/apk/google/alpha/app-google-alpha.apk"
-
+          path: "app/build/outputs/apk/debug/app-debug.apk"
+          
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -78,7 +68,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: "app/build/outputs/apk/google/alpha/app-google-alpha.apk"
+        asset_path: "app/build/outputs/apk/debug/app-debug.apk"
         asset_name: Saikou-${{ env.VERSION }}.apk
         asset_content_type: application/vnd.android.package-archive
 
